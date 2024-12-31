@@ -1,6 +1,15 @@
 from django.db import models
 from django.conf import settings
 from django.utils.timezone import now
+from users.models import CustomUser  
+
+CATEGORY_CHOICES = [
+    ('Conference', 'Conference'),
+    ('Workshop', 'Workshop'),
+    ('Concert', 'Concert'),
+    ('Wedding', 'Wedding'),
+    ('Seminar', 'Seminar'),
+]
 
 class Event(models.Model):
     title = models.CharField(max_length=255)
@@ -11,6 +20,8 @@ class Event(models.Model):
     capacity = models.PositiveIntegerField()
     created_date = models.DateTimeField(auto_now_add=True)
     attendees_count = models.PositiveIntegerField(default=0)
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='conference')
+
 
 
     def is_upcoming(self):
@@ -33,7 +44,26 @@ class Attendee(models.Model):
     registered_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('event', 'user')
+        unique_together = ('event', 'user')             # Prevent duplicate registrations
 
     def __str__(self):
-        return f"{self.user.username} -> {self.event.title}"
+        return f"{self.user.username} attending {self.event.title}"
+    
+
+class Notification(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    message = models.TextField()
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="comments")
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="comments")
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.event.title}"
