@@ -22,7 +22,7 @@ class Event(models.Model):
     description = models.TextField(blank=True)
     date_time = models.DateTimeField(default=timezone.now)
     location = models.CharField(max_length=255)
-    organizer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="organized_events")
+    organizer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="organized_events")
     capacity = models.PositiveIntegerField()
     created_date = models.DateTimeField(auto_now_add=True)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='conference')
