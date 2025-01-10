@@ -5,6 +5,9 @@ from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.hashers import make_password
 from users.models import CustomUser
 from django.conf import settings
+from django.utils import timezone
+from datetime import time
+
 
 CATEGORY_CHOICES = [
     ('Conference', 'Conference'),
@@ -18,7 +21,8 @@ CATEGORY_CHOICES = [
 class Event(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    date_time = models.DateTimeField()
+    date = models.DateField(default=timezone.now)
+    time = models.TimeField(default=time(0, 0))
     location = models.CharField(max_length=255)
     organizer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="organized_events")
     capacity = models.PositiveIntegerField()
