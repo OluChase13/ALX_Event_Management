@@ -18,7 +18,7 @@ class EventViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend,filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['location', 'category', 'title']
     search_fields = ['title', 'location']
-    ordering_fields = ['date_time', 'title']
+    ordering_fields = ['date', 'time', 'title']
     filterset_class = EventFilter       #Allows filtering options to be available on the API endpoint.
     pagination_class = pagination.PageNumberPagination
 
